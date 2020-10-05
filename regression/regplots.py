@@ -1,17 +1,16 @@
 import pandas as pd
-import plotly.express as px
+import plotly.graph_objects as go
 import numpy as np
 
 
 
-
 def regplot(x, y, model=None):
-    fig = px.scatter(x=x, y=y)
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=x, y=y, mode='markers', name='dados'))
     if model is not None:
-        fig.add_trace(px.line(x=x, y=model.predict(x.values.reshape(-1, 1))).data[0])
+        fig.add_trace(go.Scatter(x=x, y=model.predict(x.values.reshape(-1, 1)), 
+        mode='lines', name='regressão'))
     return fig
-
-
 
 if __name__ == "__main__":
     x = np.linspace(0, 10, 100)
@@ -24,4 +23,9 @@ if __name__ == "__main__":
     df['y3'] = y
     y = 2 ** x  - x ** 3 + np.random.normal(0, 8, 100)
     df['y4'] = y
-    print(regplot(df.x, df.y))
+    from sklearn.linear_model import LinearRegression
+
+    model = LinearRegression()
+    model.fit(df.x.values.reshape(-1, 1), df.y1)
+    regplot(x=df.x, y=df.y4, model=model).show()
+        
