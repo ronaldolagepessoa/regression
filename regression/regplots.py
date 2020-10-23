@@ -29,9 +29,10 @@ if __name__ == "__main__":
     df['y4'] = y
 
 
-    from models import reg_floresta, score
+    from models import reg_floresta, score, predict
 
     model = reg_floresta(df.x, df.y4)
     print(score(df.x, df.y4, model))
+    print(predict(df.x, model))
     # regplot(x=df.x, y=df.y4, model=model).show()
         

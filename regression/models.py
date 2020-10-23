@@ -7,6 +7,11 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import r2_score
 
 
+def predict(X, model):
+    if len(X.shape) == 1:
+        return model.predict(X.values.reshape(-1, 1))[0]
+    else:
+        return model.predict(X.values)[0]
 
 def score(X, y, model):
     if len(X.shape) == 1:
