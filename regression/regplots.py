@@ -33,6 +33,6 @@ if __name__ == "__main__":
 
     model = reg_floresta(df.x, df.y4)
     print(score(df.x, df.y4, model))
-    print(predict(df.x, model))
+    print(predict([10], model))
     # regplot(x=df.x, y=df.y4, model=model).show()
         
