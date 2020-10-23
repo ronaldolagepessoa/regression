@@ -10,7 +10,11 @@ def regplot(x, y, model=None):
     if model is not None:
         fig.add_trace(go.Scatter(x=x, y=model.predict(x.values.reshape(-1, 1)), 
         mode='lines', name='regressão'))
+        fig.update_layout(title='Dados + Regressão')
+    else:
+        fig.update_layout(title='Dados')
     return fig
+
 
 if __name__ == "__main__":
     x = np.linspace(0, 10, 100)
@@ -23,9 +27,11 @@ if __name__ == "__main__":
     df['y3'] = y
     y = 2 ** x  - x ** 3 + np.random.normal(0, 8, 100)
     df['y4'] = y
-    from sklearn.linear_model import LinearRegression
 
-    model = LinearRegression()
-    model.fit(df.x.values.reshape(-1, 1), df.y1)
-    regplot(x=df.x, y=df.y4, model=model).show()
+
+    from models import reg_floresta, score
+
+    model = reg_floresta(df.x, df.y4)
+    print(score(df.x, df.y4, model))
+    # regplot(x=df.x, y=df.y4, model=model).show()
         
