@@ -13,6 +13,7 @@ def predict(X, model):
     else:
         return model.predict(X.values)[0]
 
+
 def score(X, y, model):
     if len(X.shape) == 1:
         return r2_score(y, model.predict(X.values.reshape(-1, 1)))
