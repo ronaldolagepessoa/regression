@@ -9,6 +9,7 @@ from sklearn.metrics import r2_score
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.preprocessing import MinMaxScaler
 import numpy as np
+import pandas as pd
 from sklearn.model_selection import train_test_split
 import plotly.graph_objects as go
 
@@ -186,6 +187,7 @@ if __name__ == '__main__':
     df['y3'] = y
     y = 2 ** x  - x ** 3 + np.random.normal(0, 8, 100)
     df['y4'] = y
+    # df.to_csv('reg1.csv', index=False)
     model = Regression(df)
     # print(model.df.columns)
     model.set_y('y4')
