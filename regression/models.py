@@ -5,6 +5,7 @@ from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.kernel_ridge import KernelRidge
+from sklearn.neural_network import MLPRegressor
 from sklearn.metrics import r2_score
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.preprocessing import MinMaxScaler
@@ -12,6 +13,7 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 import plotly.graph_objects as go
+
 
 
 class Regression:
@@ -40,13 +42,17 @@ class Regression:
         X_num = self.mmscaler.fit_transform(self.X.select_dtypes(exclude=['object']))
         self.X_all = np.append(X_num, X_bin, axis=1)
         
-    def fit(self, kind='linear', kernel='rbf', n_vizinhos=5, profundidade=5, n_arvores=100):
+    def fit(self, kind='linear', C=1, grau=1, alfa=1, n_vizinhos=5, profundidade=5, 
+    n_arvores=100, camadas=(100,), iteracoes=200):
         func = model_dict[kind]
         kwargs_set = {
-            'kernel': kernel,
+            'C': C,
+            'grau': grau,
+            'alfa': alfa,
             'n_vizinhos': n_vizinhos,
             'profundidade': profundidade,
-            'n_arvores': n_arvores
+            'n_arvores': n_arvores,
+            'camadas': camadas
         }
         self.model = func(self.X_all, self.y, kwargs_set)
 
@@ -111,11 +117,26 @@ def reg_linear(X, y, kwargs_set):
     return model
 
 
-def reg_svm(X, y, kwargs_set):
-    """
-    kernel = "linear" ou "rbf". valor padrão igual a "rbf"
-    """
-    model = SVR(kernel=kwargs_set['kernel'], C=30)
+def reg_rbf(X, y, kwargs_set):
+    model = SVR(kernel='rbf', C = kwargs_set['C'])
+    if len(X.shape) == 1:
+        model.fit(X.values.reshape(-1, 1), y)
+    else:
+        model.fit(X, y)
+    return model
+
+
+def reg_poly(X, y, kwargs_set):
+    model = SVR(kernel='poly', degree = kwargs_set['grau'])
+    if len(X.shape) == 1:
+        model.fit(X.values.reshape(-1, 1), y)
+    else:
+        model.fit(X, y)
+    return model
+
+
+def reg_krr(X, y, kwargs_set):
+    model = KernelRidge(alpha = kwargs_set['alfa'])
     if len(X.shape) == 1:
         model.fit(X.values.reshape(-1, 1), y)
     else:
@@ -149,6 +170,7 @@ def reg_arvore(X, y, kwargs_set):
         model.fit(X, y)
     return model
 
+
 def reg_floresta(X, y, kwargs_set):
     model = RandomForestRegressor(n_estimators=kwargs_set['n_arvores'], 
     max_depth=kwargs_set['profundidade'])
@@ -158,21 +180,27 @@ def reg_floresta(X, y, kwargs_set):
         model.fit(X, y)
     return model
 
-# def reg_svr(X, y, kwargs_set):
-#     model = KernelRidge()
-#     if len(X.shape) == 1:
-#         model.fit(X.values.reshape(-1, 1), y)
-#     else:
-#         model.fit(X, y)
-#     return model
+
+def reg_neural(X, y, kwargs_set):
+    model = MLPRegressor(hidden_layer_sizes=kwargs_set['camadas'], 
+    max_iter=kwargs_set['iteracoes'])
+    if len(X.shape) == 1:
+        model.fit(X.values.reshape(-1, 1), y)
+    else:
+        model.fit(X, y)
+    return model
+
 
 model_dict = {
     'linear': reg_linear, 
-    'svm': reg_svm,
+    'rbf': reg_rbf,
+    'poly': reg_poly,
+    'krr': reg_krr,
     'knn': reg_knn,
     'gauss': reg_gauss,
     'arvore': reg_arvore,
-    'floresta': reg_floresta}
+    'floresta': reg_floresta,
+    'neural': reg_neural}
 
 if __name__ == '__main__':
     import pandas as pd
@@ -194,7 +222,7 @@ if __name__ == '__main__':
     model.set_X(include_columns=['x'])
 
     # print(model.X.columns)
-    model.fit(kind='svm', n_arvores=70, profundidade=5)
+    model.fit(kind='neural', camadas=(100,))
     # print(model.predict([[100, 2, 2, 1, 10, 'aceita', 800, 1500, 150, 80]]))
     # print(model.score())
     # print(model.fit_test(kind='arvore', n_arvores=70, profundidade=7))
