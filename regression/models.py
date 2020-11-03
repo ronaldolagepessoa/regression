@@ -52,7 +52,8 @@ class Regression:
             'n_vizinhos': n_vizinhos,
             'profundidade': profundidade,
             'n_arvores': n_arvores,
-            'camadas': camadas
+            'camadas': camadas,
+            'iteracoes': iteracoes
         }
         self.model = func(self.X_all, self.y, kwargs_set)
 
@@ -68,7 +69,8 @@ class Regression:
             'n_vizinhos': n_vizinhos,
             'profundidade': profundidade,
             'n_arvores': n_arvores,
-            'camadas': camadas
+            'camadas': camadas,
+            'iteracoes': iteracoes
         }
         model = func(X_train, y_train, kwargs_set)
         if len(self.X_all.shape) == 1:
