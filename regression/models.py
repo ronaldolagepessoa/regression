@@ -56,15 +56,19 @@ class Regression:
         }
         self.model = func(self.X_all, self.y, kwargs_set)
 
-    def fit_test(self, kind='linear', kernel='rbf', n_vizinhos=5, profundidade=5, n_arvores=100, train_size=2/3, random_state=1):
+    def fit_test(self, kind='linear', C=1, grau=1, alfa=1, n_vizinhos=5, profundidade=5, 
+    n_arvores=100, camadas=(100,), iteracoes=200, train_size=2/3, random_state=1):
         X_train, X_test, y_train, y_test = train_test_split(self.X_all, 
         self.y, train_size=train_size, random_state=random_state)
         func = model_dict[kind]
         kwargs_set = {
-            'kernel': kernel,
+            'C': C,
+            'grau': grau,
+            'alfa': alfa,
             'n_vizinhos': n_vizinhos,
             'profundidade': profundidade,
-            'n_arvores': n_arvores
+            'n_arvores': n_arvores,
+            'camadas': camadas
         }
         model = func(X_train, y_train, kwargs_set)
         if len(self.X_all.shape) == 1:
